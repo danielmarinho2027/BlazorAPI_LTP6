@@ -1,0 +1,51 @@
+﻿@page "/"
+@inject HttpClient Http;
+
+
+<h1>Chamada de API</h1>
+<br />
+<input type="text" @bind="name" />
+<button class="btn btn-dark" @onclick="GetCountriesByName">Buscar</button>
+<button class="btn btn-dark" @onclick="GetCountries">Buscar Todos</button>
+<br />
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Currency</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coutry in CountryList)
+        {
+            <tr>
+                <td>@coutry.Name</td>
+                <td>
+                    @foreach (var currency in coutry.currencies)
+                    {
+                        <span>@currency.name</span>
+                    }
+                </td>
+                
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+@code{
+    List<Country> CountryList = new List<Country>();
+    private string name;
+
+    async Task GetCountries()
+    {
+        CountryList = await Http.GetJsonAsync<List<Country>>("https://restcountries.eu/rest/v2/all");
+    }
+    async Task GetCountriesByName()
+    {
+        CountryList = await Http.GetJsonAsync<List<Country>>("https://restcountries.eu/rest/v2/name/" + name);
+    }
+}
